@@ -473,6 +473,12 @@ $field->setLabel($addon->i18n('filepond_settings_replace_mediapool'));
 $field->addOption($addon->i18n('filepond_settings_replace_mediapool'), 1);
 $field->setNotice($addon->i18n('filepond_settings_replace_mediapool_notice'));
 
+// Multiupload als Medienpool-Unterseite
+$field = $form->addCheckboxField('mediapool_subpage');
+$field->setLabel($addon->i18n('filepond_settings_mediapool_subpage'));
+$field->addOption($addon->i18n('filepond_settings_mediapool_subpage_label'), 1);
+$field->setNotice($addon->i18n('filepond_settings_mediapool_subpage_notice'));
+
 // Alt-Text-Checker aktivieren
 $field = $form->addCheckboxField('enable_alt_checker');
 $field->setLabel($addon->i18n('filepond_settings_alt_checker'));

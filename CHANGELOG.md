@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 2.3.3 (2026-03-05)
+
+### ✨ Verbesserungen
+- **Multiupload als Medienpool-Unterseite**: Der FilePond-Upload kann optional als zusätzliche Unterseite "Multiupload" im Medienpool eingebunden werden (Einstellungen → Medienpool-Integration). Die Seite erscheint direkt nach der normalen Upload-Seite und erfordert die Berechtigung `filepond_uploader[upload]`.
+
 ## Version 2.3.1 - 2.3.2 (2026-02-27)
 
 ### 🐛 Bugfixes

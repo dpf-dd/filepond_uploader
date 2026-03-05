@@ -172,6 +172,45 @@ if(rex_config::get('filepond_uploader', 'replace_mediapool', false))
     });
 }
 
+// Multiupload als Medienpool-Unterseite registrieren
+$mediapoolSubpage = rex_config::get('filepond_uploader', 'mediapool_subpage', '');
+if ($mediapoolSubpage === '|1|' || $mediapoolSubpage === '1') {
+    rex_extension::register('PAGES_PREPARED', function (rex_extension_point $ep) {
+        $user = rex::getUser();
+        if (!$user) {
+            return;
+        }
+
+        /** @var array<string, rex_be_page> $pages */
+        $pages = $ep->getSubject();
+
+        if (isset($pages['mediapool'])) {
+            $mediapoolPage = $pages['mediapool'];
+
+            $title = '<i class="fa-solid fa-cloud-arrow-up"></i> ' . rex_i18n::msg('filepond_multiupload_title');
+            $multiuploadPage = new rex_be_page('filepond_multiupload', $title);
+            $multiuploadPage->setSubPath(rex_path::addon('filepond_uploader', 'pages/upload.php'));
+            $multiuploadPage->setRequiredPermissions('filepond_uploader[upload]');
+
+            // Nach der 'upload'-Seite einfügen
+            $subpages = $mediapoolPage->getSubpages();
+            $ordered = [];
+            $inserted = false;
+            foreach ($subpages as $key => $subpage) {
+                $ordered[$key] = $subpage;
+                if ($key === 'upload' && !$inserted) {
+                    $ordered['filepond_multiupload'] = $multiuploadPage;
+                    $inserted = true;
+                }
+            }
+            if (!$inserted) {
+                $ordered['filepond_multiupload'] = $multiuploadPage;
+            }
+            $mediapoolPage->setSubpages($ordered);
+        }
+    });
+}
+
 // Alt-Text-Checker als Medienpool-Unterseite registrieren
 $enableAltChecker = rex_config::get('filepond_uploader', 'enable_alt_checker', '');
 if ($enableAltChecker === '|1|' || $enableAltChecker === '1') {
