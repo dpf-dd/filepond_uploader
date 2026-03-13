@@ -16,6 +16,17 @@ $selMedia->setAttribute('data-live-search', 'true');
 $mediaPerm = rex::getUser() ? rex::getUser()->getComplexPerm('media') : null;
 if ($mediaPerm instanceof rex_media_perm && $mediaPerm->hasAll()) {
     $selMedia->addOption(rex_i18n::msg('filepond_upload_no_category'), '0');
+} elseif ($selectedCategory === 0) {
+    // Eingeschränkter User ohne explizit gesetzter Kategorie:
+    // erste verfügbare Kategorie automatisch vorauswählen
+    $rootCats = rex_media_category::getRootCategories();
+    foreach ($rootCats as $cat) {
+        if (!($mediaPerm instanceof rex_media_perm) || $mediaPerm->hasCategoryPerm($cat->getId())) {
+            $selectedCategory = $cat->getId();
+            $selMedia->setSelected($selectedCategory);
+            break;
+        }
+    }
 }
 
 $currentUser = rex::getUser();
@@ -319,7 +330,17 @@ $(document).on("rex:ready", function() {
     }
     
     console.log("FilePond Uploader page initialized");
-    
+
+    // Initialsynchronisation: data-filepond-cat mit dem aktuell gewählten Select-Wert abgleichen.
+    // Nötig wenn ein eingeschränkter User keine "Keine Kategorie"-Option hat und
+    // der initiale data-filepond-cat-Wert 0 wäre, obwohl der Select bereits etwas auswählt.
+    (function() {
+        var initCatVal = $("#rex-mediapool-category").val();
+        if (initCatVal !== null && initCatVal !== undefined && initCatVal !== '') {
+            $("#filepond-upload").attr("data-filepond-cat", initCatVal);
+        }
+    })();
+
     $("#rex-mediapool-category").on("change", function() {
         const newCategory = $(this).val();
         const $input = $("#filepond-upload");
