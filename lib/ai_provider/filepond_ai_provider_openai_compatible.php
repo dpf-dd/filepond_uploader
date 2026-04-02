@@ -182,8 +182,7 @@ class filepond_ai_provider_openai_compatible extends filepond_ai_provider_abstra
                     ],
                 ],
             ],
-            'max_tokens' => $maxTokens,
-            'temperature' => 0.4,
+            'max_completion_tokens' => $maxTokens,
         ];
 
         $ch = curl_init();
@@ -205,7 +204,6 @@ class filepond_ai_provider_openai_compatible extends filepond_ai_provider_abstra
         if (0 !== curl_errno($ch)) {
             $this->handleCurlError($ch);
         }
-        curl_close($ch);
 
         if (!is_string($response)) {
             throw new Exception('Empty response from API');
@@ -279,8 +277,6 @@ class filepond_ai_provider_openai_compatible extends filepond_ai_provider_abstra
                 return ['success' => false, 'message' => 'Verbindungsfehler: ' . $e->getMessage()];
             }
         }
-
-        curl_close($ch);
 
         if (!is_string($response)) {
             return ['success' => false, 'message' => 'Empty response from API'];
